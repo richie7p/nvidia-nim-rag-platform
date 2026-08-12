@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const turtleModule = process.env.E2E_TURTLE_MODULE ?? "true";
+const turtleModule = process.env.E2E_TURTLE_MODULE ?? "false";
 const edition = turtleModule === "true" ? "turtle" : "core";
 const pythonExecutable = process.env.E2E_PYTHON ?? "..\\.venv\\Scripts\\python.exe";
 const e2ePort = process.env.E2E_PORT ?? "8000";
