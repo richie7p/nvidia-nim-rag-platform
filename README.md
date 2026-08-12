@@ -20,7 +20,7 @@
 - 完整管理後台：使用者、AI usage、知識向量、Provider 健康檢查與稽核
 - `.env` 品牌設定：網站名稱、圖示、助理名稱、文案、知識名稱與免責聲明
 - 自訂 System Prompt，不需修改 Python 或 React
-- SQLite 開箱即用，透過 `DATABASE_URL` 可切換 PostgreSQL
+- SQLite 開箱即用；可透過 `DATABASE_URL` 改接 PostgreSQL，但需另裝相容驅動並在部署環境完成 migration 與整合測試
 - Production build 由 FastAPI 提供，只需啟動一個服務
 
 ## 可客製範圍
@@ -52,7 +52,7 @@ flowchart LR
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r backend\requirements-dev.txt
 Set-Location frontend
-npm.cmd install
+npm.cmd ci
 Set-Location ..
 Copy-Item .env.example .env
 ```

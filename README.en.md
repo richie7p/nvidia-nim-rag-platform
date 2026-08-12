@@ -13,7 +13,7 @@ It is a practical starting point for campus information services, internal compa
 ## Highlights
 
 - React and TypeScript frontend with a FastAPI backend
-- SQLAlchemy persistence with SQLite by default and a configurable `DATABASE_URL`
+- SQLAlchemy persistence with SQLite by default and a configurable `DATABASE_URL`; PostgreSQL requires a compatible driver and deployment-specific validation
 - NVIDIA Hosted NIM chat streaming, vision, and embeddings; no local model download
 - Registration, login, HttpOnly sessions, CSRF protection, Argon2 password hashing, and resource ownership checks
 - Multiple conversations, SSE streaming, automatic titles, rolling summaries, Markdown rendering, and citation cards
@@ -44,7 +44,7 @@ flowchart LR
     API --> Auth["Authentication and ownership"]
     API --> Chat["Chat context builder"]
     API --> RAG["Markdown RAG"]
-    Auth --> DB[("SQLite or PostgreSQL")]
+    Auth --> DB[("SQLite or optional PostgreSQL")]
     Chat --> NIM["NVIDIA Hosted NIM"]
     RAG --> NIM
     RAG --> DB
@@ -96,7 +96,8 @@ Open <http://127.0.0.1:8000>. In development mode, API documentation is availabl
 python3 -m venv .venv
 .venv/bin/python -m pip install -r backend/requirements-dev.txt
 cd frontend
-npm install
+npm ci
+npm run build
 cd ..
 cp .env.example .env
 ```
@@ -111,6 +112,8 @@ cd backend
 cd ..
 .venv/bin/python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
 ```
+
+PostgreSQL is not exercised by the included CI workflow. Before using it in production, install a compatible SQLAlchemy driver and run migrations and integration tests against a staging PostgreSQL instance.
 
 ## Add your own RAG content
 
