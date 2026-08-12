@@ -229,7 +229,7 @@ npm.cmd run test:e2e
 
 測試使用內部 Fake Provider，不需要公開或提交 NVIDIA Key。
 
-相同測試會由 GitHub Actions 在 `windows-latest` 與 `ubuntu-latest` 執行。macOS/Linux 可把上述 Python 路徑換成 `../.venv/bin/python`，把 `npm.cmd` 換成 `npm`。
+相同測試會由 GitHub Actions 在 `windows-latest`、`ubuntu-latest` 與 `macos-latest` 執行。macOS/Linux 可把上述 Python 路徑換成 `../.venv/bin/python`，把 `npm.cmd` 換成 `npm`。
 
 ## 常見問題
 
