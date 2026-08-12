@@ -1,5 +1,9 @@
 # NVIDIA NIM RAG Platform
 
+**繁體中文** | [English](README.en.md)
+
+[![CI](https://github.com/richie7p/nvidia-nim-rag-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/richie7p/nvidia-nim-rag-platform/actions/workflows/ci.yml)
+
 一套可自行部署、可換品牌、可直接替換 Markdown 知識庫的完整 RAG 平台。
 
 這個 repository 是「系統架構版」：沒有綁定烏龜、學校或公司的特定內容。下載者只需要準備自己的 NVIDIA NIM API Key、放入自己的文件，就能建立組織專屬 AI 助理。
@@ -18,6 +22,12 @@
 - 自訂 System Prompt，不需修改 Python 或 React
 - SQLite 開箱即用，透過 `DATABASE_URL` 可切換 PostgreSQL
 - Production build 由 FastAPI 提供，只需啟動一個服務
+
+## 可客製範圍
+
+不修改程式即可替換 Markdown 知識、來源資料、品牌文案、System Prompt 與 NVIDIA NIM 模型設定，適合快速建立新的知識問答場景。
+
+若新領域需要「學生 Profile」、「客戶案件」或簽核流程等結構化功能，仍須新增或調整資料表、API 與前端頁面。第一版內建的 `ModelProvider` 定義了替換邊界，但目前可直接使用的實作只有 NVIDIA Hosted NIM；vLLM 或其他 Provider 尚未內建。
 
 ## 架構
 
@@ -126,6 +136,8 @@ prompts/assistant.md
 - Embedding：`nvidia/llama-nemotron-embed-1b-v2`
 
 模型供應狀態可能改變，所有型號都可在 `.env` 更換。若使用者沒有填 API Key，帳號與管理功能仍可開啟，AI 操作會顯示安全提示。
+
+NVIDIA 目前的 [Vision Model Card](https://build.nvidia.com/nvidia/nemotron-nano-12b-v2-vl/modelcard) 將 `nvidia/nemotron-nano-12b-v2-vl` 的語言支援標示為 English only。若產品需要穩定的繁體中文圖片回答，請用私人 Key 完成真實中文 Smoke Test，並視結果更換為明確支援目標語言的 Vision 模型。
 
 ## 測試
 
