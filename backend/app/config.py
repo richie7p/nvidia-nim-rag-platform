@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     app_disclaimer: str = "AI 可能會出錯，重要決策請由資料負責人覆核。"
     enable_turtle_module: bool = False
     knowledge_dir: str = "./knowledge"
-    system_prompt_file: str = "./prompts/generic-assistant.md"
+    system_prompt_file: str = "./prompts/assistant.md"
     system_prompt: str | None = None
     app_env: str = "development"
     app_origin: str = "http://localhost:5173"
@@ -41,9 +41,9 @@ class Settings(BaseSettings):
     ai_provider: str = "nvidia-nim"
     ai_api_key: str = ""
     ai_base_url: str = "https://integrate.api.nvidia.com/v1"
-    ai_model: str = "nvidia/nemotron-3-nano-30b-a3b"
+    ai_model: str = "mistralai/ministral-14b-instruct-2512"
     ai_fallback_model: str | None = "mistralai/mistral-nemotron"
-    ai_vision_model: str = "nvidia/nemotron-nano-12b-v2-vl"
+    ai_vision_model: str = "mistralai/ministral-14b-instruct-2512"
     ai_embedding_model: str = "nvidia/llama-nemotron-embed-1b-v2"
     ai_timeout_seconds: int = 45
     ai_max_output_tokens: int = 1200
@@ -93,6 +93,18 @@ class Settings(BaseSettings):
             path = BACKEND_DIR / path
         return str(path.resolve())
 
+    @model_validator(mode="after")
+    def validate_production_security(self):
+        if not self.is_production:
+            return self
+        secret = self.session_secret.strip()
+        placeholder_markers = ("development-only", "replace", "請替換", "請換成")
+        if len(secret) < 32 or any(marker in secret.casefold() for marker in placeholder_markers):
+            raise ValueError("Production requires a unique SESSION_SECRET of at least 32 characters.")
+        if not self.app_origin.startswith("https://") or "example.org" in self.app_origin:
+            raise ValueError("Production APP_ORIGIN must be the real public HTTPS origin.")
+        return self
+
     @property
     def knowledge_path(self) -> Path:
         path = Path(self.knowledge_dir)
@@ -109,6 +121,8 @@ class Settings(BaseSettings):
 
     @property
     def allowed_origins(self) -> list[str]:
+        if self.is_production:
+            return [self.app_origin.rstrip("/")]
         origins = {
             self.app_origin.rstrip("/"),
             "http://localhost:5173",
