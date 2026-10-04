@@ -9,7 +9,7 @@
 | Starlette／Pillow／multipart 已公告依賴 | P1 | 已更新相容版本；後端與上傳／附件回歸測試通過 |
 | 本機 E2E 預設與 spec 不一致 | P2 | 已共用 edition 設定，並修正各作業系統 Python 路徑 |
 | SQLite JSON vectors／process-local 狀態的擴展限制 | P2 | 已整理限制與驗證順序；多程序架構與 PostgreSQL 整合仍待實作及環境測試 |
-| NIM Key、真實模型品質、token 費用與限流 | P2 | 待憑證與真實 Provider 驗證 |
+| NIM Key、真實模型品質、token 費用與限流 | P2 | 已完成真實 Chat／Vision／Embedding／fallback 小樣本流程；領域品質、成本與正式限制仍待驗證 |
 | undici 與 Vitest 開發依賴公告 | P2 | 已更新；npm 全樹掃描為零項 |
 
 ## 已完成的修改
@@ -49,12 +49,12 @@ Python 掃描可在獨立工具環境安裝 `pip-audit==2.10.1`，從根目錄�
 
 ## 後續優先順序
 
-1. 真實 NVIDIA Chat、Vision、Embedding 的連線、輸出與費用驗證。E2E 明確清空 AI Key；Fake Provider 的測試結果不代表雲端模型品質。
+1. 真實 NVIDIA Chat、Vision、Embedding 連線與小樣本流程已測；完整輸出品質與費用驗證仍待完成。E2E 明確清空 AI Key；Fake Provider 的測試結果不代表雲端模型品質。
 2. 組織知識庫需準備有來源的評估題集，驗證檢索命中、引用正確性、文件外問題與提示注入情境。
 3. 正式部署的 HTTPS、Session Secret、備份／還原、可信任 Origin 驗證。
 4. 維持單程序 SQLite 部署；多 worker／多實例前完成 PostgreSQL migration、共享限流與並行隔離測試。
 
-本輪未操作 production 資料、未呼叫付費 Provider；不能以自動測試或依賴掃描替代正式環境驗收。
+首輪依賴修復未操作 production 資料或呼叫真實 Provider；後續授權 NVIDIA smoke 見下方紀錄。不能以自動測試或依賴掃描替代正式環境驗收。
 
 ## 修補依據
 
@@ -65,6 +65,10 @@ Python 掃描可在獨立工具環境安裝 `pip-audit==2.10.1`，從根目錄�
 
 ## 本輪本機驗證結果
 
-2026-10-04，Windows／Node.js 22.23.2／Python 3.11.16。後端 46 項、前端 7 項測試通過；預設及另一個 edition 各 2 項桌機／手機 E2E 通過。型別檢查、production build、migration 與知識文件結構檢查通過。npm 全樹與升級後 Python 安裝環境的 advisory 掃描均為零項。
+2026-10-04，Windows／Node.js 22.23.2／Python 3.11.16。首輪後端 46 項、前端 7 項測試通過；預設及另一個 edition 各 2 項桌機／手機 E2E 通過。型別檢查、production build、migration 與知識文件結構檢查通過。npm 全樹與升級後 Python 安裝環境的 advisory 掃描均為零項。
 
 Python 測試仍有 Starlette 對 httpx TestClient 及舊 status 常數的棄用警告，未影響結果。跨作業系統驗證由本 PR 的 CI 執行；此處的本機結果不代表真實 Provider 或 production 驗證。
+
+## 授權真實 API 後續測試
+
+已補上 [NVIDIA 真實測試紀錄](LIVE-NVIDIA-TEST.md) 與可手動重跑的工具。詳列首次失敗、修正、最後一輪結果及驗證限制；不得由小樣本通過推論醫療或飼養正確率。
